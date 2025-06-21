@@ -1,0 +1,180 @@
+
+
+----------------Business Problems solve--------------------
+
+
+
+
+--1 Total Sales: The overall revenue generated from all items sold.
+
+select sum(total_sales) as total
+from blankit;					---Total Sales
+
+---Total sales of "Low Fat"
+select round(
+		sum(total_sales),2) as total_sales
+from blankit
+where item_fat_content='Low Fat';
+
+---Total Sales of "Regular"
+select round(
+		sum(total_sales),2) as total_sales
+from blankit
+where item_fat_content='Regular';
+
+
+---Total Sales of Both use Group by 
+select 
+		item_fat_content,
+		sum(total_sales) as total
+
+ from blankit
+ group by item_fat_content;
+
+
+
+
+--2 Average Sales: The average revenue per sale.
+
+select round(
+		avg(total_sales),2) as average_sale
+from blankit;
+
+
+--3 Number of Items: The total count of different items sold.
+
+
+---Total Transactions
+select count(*) as total from blankit	
+
+
+---Total Transactions of 2022
+select count(*) as total from blankit
+where outlet_establishment_year=2022;			
+
+
+---Total transaction of Each year
+select 
+		outlet_establishment_year,
+		count(*) as total
+
+from blankit
+group by outlet_establishment_year
+order by outlet_establishment_year desc;
+
+
+
+--4 Average Rating: The average customer rating for items sold. 
+
+select 
+		avg(rating) as average_rating
+from blankit
+
+
+--5 Total Sales by Fat Content:
+	--Objective: Analyze the impact of fat content on total sales.
+	--Additional KPI Metrics: Assess how other KPIs (Average Sales, Number of Items, Average Rating) vary with fat content.
+
+select item_fat_content,
+		round(sum(total_sales),2) as total_sale,
+		count(*) as total_count,
+		round(avg(rating),3) as average_rating
+		
+from blankit
+group by item_fat_content
+order by total_sale desc;
+
+
+
+--6 Total Sales by Item Type:
+	--Objective: Identify the performance of different item types in terms of total sales.
+	--Additional KPI Metrics: Assess how other KPIs (Average Sales, Number of Items, Average Rating) vary with fat content.
+
+select item_type,
+		round(sum(total_sales),2) as total_sale,
+		round(avg(total_sales),2) as average_sale,
+		count(*) as total_count,
+		round(avg(rating),3) as average_rating
+from blankit
+group by item_type
+order by total_sale desc
+
+
+--7 Fat Content by Outlet for Total Sales:
+	--Objective: Compare total sales across different outlets segmented by fat content.
+	--Additional KPI Metrics: Assess how other KPIs (Average Sales, Number of Items, Average Rating) vary with fat content.
+
+select 
+		outlet_identifier,
+		item_fat_content,
+		sum(total_sales) as total_sale,
+		avg(total_sales) as average_sale,
+		count(*) as total_count,
+		avg(rating) as average_rating
+from blankit
+group by outlet_identifier,item_fat_content
+order by total_sale desc;
+
+
+
+--8 Total Sales by Outlet Establishment:
+	--Objective: Evaluate how the age or type of outlet establishment influences total sales.
+select 
+	outlet_establishment_year,
+	round(sum(total_sales),2) as total_sale
+
+from blankit
+group by outlet_establishment_year
+order by outlet_establishment_year asc;
+
+
+--9 Percentage of Sales by Outlet Size:
+	--Objective: Analyze the correlation between outlet size and total sales.
+
+--without use round
+select 
+	outlet_size,
+	sum(total_sales) as total_sales,
+	sum(total_sales)*100/sum(sum(total_sales)) over() as total_percentage
+from blankit
+group by outlet_size;
+
+
+
+---with use round
+SELECT 
+    outlet_size,
+    SUM(total_sales) AS total_sales,
+    ROUND(SUM(total_sales) * 100.0 / SUM(SUM(total_sales)) OVER (), 2) AS total_sale_percentage
+FROM blankit
+GROUP BY outlet_size;
+
+
+
+--10 Sales by Outlet Location:
+	--Objective: Assess the geographic distribution of sales across different locations.
+
+select 
+		outlet_location_type,
+		sum(total_sales) as total_sale,
+		avg(total_sales) as average_sale,
+		count(*) as total_count,
+		avg(rating) as average_rating
+from blankit
+group by outlet_location_type
+order by total_sale desc;
+
+
+
+
+-- 11 All Metrics by Outlet Type:
+	--Objective: Provide a comprehensive view of all key metrics (Total Sales, Average Sales, Number of 	Items, Average Rating) broken down by different outlet types.
+select 
+		outlet_type,
+		sum(total_sales) as total_sale,
+		avg(total_sales) as average_sale,
+		count(*) as total_count,
+		avg(rating) as average_rating
+from blankit
+group by outlet_type
+order by total_sale desc;
